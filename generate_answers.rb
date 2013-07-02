@@ -4,6 +4,7 @@ require 'rubygems'
 require 'yaml'
 require 'highline/import'
 
+$workdir = File.dirname( File.symlink?(__FILE__) ? File.readlink(__FILE__) : __FILE__ )
 $terminal = $terminal || Highline.new
 
 # Bonus, per-module, questions defined up top where they're easy to find :)
@@ -16,7 +17,11 @@ def foreman_questions
     => 'menu_helper("agree", "foreman", "passenger")',
     # This is a non-boolean example. Note we can't do validations easily here...
     "Should Foreman be installed from the stable,rc, or nightly repo? (default: stable) " \
-    => 'menu_helper("string", "foreman_proxy", "repo")',
+    => 'menu_helper("string", "foreman", "repo")',
+    "Should the database be installed and configured for Foreman? (default: true) " \
+    => 'menu_helper("agree", "foreman", "db_manage")',
+    "Which database should be used for Foreman: postgresql (default), mysql or sqlite? " \
+    => 'menu_helper("string", "foreman", "db_type")',
   }
 end
 
@@ -68,7 +73,7 @@ $terminal.page_at = data.last
 
 # default output
 
-$outfile = "#{File.dirname(__FILE__)}/foreman_installer/answers.yaml"
+$outfile = "#{$workdir}/foreman_installer/answers.yaml"
 $output = {
   "foreman" => true,
   "foreman_proxy" => true,
@@ -81,7 +86,7 @@ $output = {
 def save_or_run_and_exit
   File.open($outfile, 'w') {|f| f.write(YAML.dump($output)) }
   # If the foreman_installer module exists then just use it. Otherwise, ask.
-  $modulepath = File.exists?("#{File.dirname(__FILE__)}/foreman_installer") ? File.dirname(__FILE__) : ask("<%= color('Where are the installer Puppet modules?', :question) %>")
+  $modulepath = File.exists?("#{$workdir}/foreman_installer") ? $workdir : ask("<%= color('Where are the installer Puppet modules?', :question) %>")
   if Process::UID.eid == 0 && agree("\n<%= color('Do you want to run Puppet now with these settings?', :question) %> (y/n)", false)
     system("echo include foreman_installer | puppet apply --modulepath #{$modulepath} -v")
     parting_message

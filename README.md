@@ -9,38 +9,25 @@ May install an example puppet master setup using passenger as well, including th
 
 # Installation
 
+## Stable release
+
+Releases of foreman-installer are made via RPM and deb packages and are
+published via the normal Foreman repositories.
+
+See the manual and quickstart guide available at [theforeman.org](http://theforeman.org/).
+
 ## Using GIT
 
-git clone --recursive git://github.com/theforeman/foreman-installer.git
-
-## Direct download
-
-Since we are no longer using one repository for all sources, a single tarball is no longer provided.
-Download the source code for each module on its own:
-
-  * http://github.com/theforeman/puppet-apache/tarball/master
-  * http://github.com/theforeman/puppet-foreman/tarball/master
-  * http://github.com/theforeman/puppet-foreman_proxy/tarball/master
-  * http://github.com/theforeman/puppet-passenger/tarball/master
-  * http://github.com/theforeman/puppet-puppet/tarball/master
-  * http://github.com/theforeman/puppet-tftp/tarball/master
-  * http://github.com/theforeman/puppet-xinetd/tarball/master
-
-or you can use this script:
-
-    export MODULE_PATH="/etc/puppet/modules/common"
-    mkdir -p $MODULE_PATH
-    for mod in apache foreman foreman_proxy passenger puppet tftp xinetd; do
-      mkdir -p $MODULE_PATH/$mod
-      wget http://github.com/theforeman/puppet-$mod/tarball/master -O - | tar xzvf - -C $MODULE_PATH/$mod --strip-components=1
-    done;
-    echo include foreman_installer | puppet apply --modulepath $MODULE_PATH
+git clone --recursive git://github.com/theforeman/foreman-installer.git -b develop
 
 # Requirements
 
 if you are using RHEL, EPEL repo must be enabled <http://fedoraproject.org/wiki/EPEL>
 
 if you are using Debian (or Ubuntu), see the additional notes in README.debian
+
+The Puppet Labs repositories may optionally be enabled for newer versions of Puppet
+than are available in base OS repos.
 
 # Setup
 
@@ -118,9 +105,10 @@ If you just want to include the relavant bits to run on your puppet master you m
 
 See http://theforeman.org or at #theforeman irc channel on freenode
 
-Copyright (c) 2010-2012 Ohad Levy
+Copyright (c) 2010-2012 Ohad Levy and their respective owners
 
-This program and entire repository is free software: you can redistribute it and/or modify
+Except where specified in provided modules, this program and entire
+repository is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 any later version.
